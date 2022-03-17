@@ -1,6 +1,6 @@
 ﻿using SQLite;
 
-namespace RainlinkParser
+namespace RainlinkImportMaker
 {
     public class MwLink
     {

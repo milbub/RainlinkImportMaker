@@ -5,7 +5,7 @@ using System.Xml;
 using InfluxDB.Client;
 using InfluxDB.Client.Core.Flux.Domain;
 
-namespace RainlinkParser
+namespace RainlinkImportMaker
 {
     public static class InfluxManager
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using SQLite;
 
-namespace RainlinkParser
+namespace RainlinkImportMaker
 {
     public static class LinksLoader
     {

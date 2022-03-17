@@ -5,7 +5,7 @@ using System.IO;
 using System.Xml;
 using Microsoft.VisualBasic.FileIO;
 
-namespace RainlinkParser
+namespace RainlinkImportMaker
 {
     class Program
     {
@@ -15,7 +15,7 @@ namespace RainlinkParser
 
             if (args.Length != 5)
             {
-                Console.WriteLine("Bad arguments. Please use:\nRainlinkParser.exe <path to MWLs list> <start time> <end time> <interval in minutes>");
+                Console.WriteLine("Bad arguments. Please use:\nRainlinkImportMaker.exe <path to MWLs list> <start time> <end time> <interval in minutes> <path to output CSV>");
                 return;
             }
 

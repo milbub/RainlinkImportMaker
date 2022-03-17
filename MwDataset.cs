@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RainlinkParser
+namespace RainlinkImportMaker
 {
     public class MwDataset
     {

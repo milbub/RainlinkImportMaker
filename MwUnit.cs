@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace RainlinkParser
+namespace RainlinkImportMaker
 {
     public class MwUnit
     {
