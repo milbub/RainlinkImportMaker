@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-using InfluxDB.Client;
+﻿using InfluxDB.Client;
 using InfluxDB.Client.Core.Flux.Domain;
+using System;
+using System.Collections.Generic;
+using System.Xml;
 
 namespace RainlinkImportMaker
 {
     public static class InfluxManager
     {
-        private const string Token = "2qaZ-Uf56iNNiRizePP0ichqVwoEAxjlwIr4wy1VeZTy1X7v0uGJFoIRYuvV4qz3Zz00U277yK5FOTUTK-km9A==";
+        private const string Token = "token";
         private const string Address = "http://localhost:8086";
-        private const string Bucket = "mws";
-        private const string Org = "vut";
+        private const string Bucket = "bucket";
+        private const string Org = "org";
 
         private static readonly InfluxDBClient _client;
 
@@ -21,7 +20,20 @@ namespace RainlinkImportMaker
             _client = InfluxDBClientFactory.Create(Address, Token);
         }
 
-        public static Dictionary<DateTime, MwDataset> QueryUnitMinMax (string Ip, DateTime Start, DateTime End, TimeSpan Interval)
+        public static Dictionary<DateTime, MwDataset> QueryUnitMean(string Ip, DateTime Start, DateTime End, TimeSpan Interval)
+        {
+            string start = XmlConvert.ToString(Start, XmlDateTimeSerializationMode.Utc);
+            string end = XmlConvert.ToString(End, XmlDateTimeSerializationMode.Utc);
+            string interval = ((int)Interval.TotalSeconds).ToString() + "s";
+
+            Dictionary<DateTime, MwDataset> data = new Dictionary<DateTime, MwDataset>();
+
+            InfluxQuery(data, Ip, start, end, interval, "mean");
+
+            return data;
+        }
+
+        public static Dictionary<DateTime, MwDataset> QueryUnitMinMax(string Ip, DateTime Start, DateTime End, TimeSpan Interval)
         {
             string start = XmlConvert.ToString(Start, XmlDateTimeSerializationMode.Utc);
             string end = XmlConvert.ToString(End, XmlDateTimeSerializationMode.Utc);

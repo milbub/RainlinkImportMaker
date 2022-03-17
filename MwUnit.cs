@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace RainlinkImportMaker
+﻿namespace RainlinkImportMaker
 {
     public class MwUnit
     {
         public string Ip { get; private set; }
         public string IpRemote { get; private set; }
         public MwLink Link { get; private set; }
-        
+
         public bool IsTxVolatile
         {
             get

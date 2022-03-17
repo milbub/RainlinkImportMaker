@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Microsoft.VisualBasic.FileIO;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Xml;
-using Microsoft.VisualBasic.FileIO;
 
 namespace RainlinkImportMaker
 {
@@ -15,7 +15,7 @@ namespace RainlinkImportMaker
 
             if (args.Length != 5)
             {
-                Console.WriteLine("Bad arguments. Please use:\nRainlinkImportMaker.exe <path to MWLs list> <start time> <end time> <interval in minutes> <path to output CSV>");
+                Console.WriteLine("Bad arguments. Please use:\nRainlinkImportMaker.exe <path to MWLs list> <START time in RFC 3339> <END time in RFC 3339> <interval in minutes> <path to output CSV>");
                 return;
             }
 
@@ -125,7 +125,12 @@ namespace RainlinkImportMaker
                 if (queriedMws.ContainsKey(LoadedUnits[i].Ip))
                     setLocal = queriedMws[LoadedUnits[i].Ip];
                 else
-                    setLocal = InfluxManager.QueryUnitMinMax(LoadedUnits[i].Ip, start, end, interval);
+                {
+                    if (LoadedUnits[i].IsTxVolatile)
+                        setLocal = InfluxManager.QueryUnitMean(LoadedUnits[i].Ip, start, end, interval);
+                    else
+                        setLocal = InfluxManager.QueryUnitMinMax(LoadedUnits[i].Ip, start, end, interval);
+                }
 
                 /* MODIFY SIGNAL POWER DATA (local Rx power - remote Tx power) */
                 // only for Tx volatile MW unit models
@@ -135,7 +140,7 @@ namespace RainlinkImportMaker
                     if (queriedMws.ContainsKey(LoadedUnits[i].IpRemote))
                         setRemote = queriedMws[LoadedUnits[i].IpRemote];
                     else
-                        setRemote = InfluxManager.QueryUnitMinMax(LoadedUnits[i].IpRemote, start, end, interval);
+                        setRemote = InfluxManager.QueryUnitMean(LoadedUnits[i].IpRemote, start, end, interval);
 
                     // remove times where remote Tx power is not available
                     List<DateTime> keysToRemove = new List<DateTime>();
@@ -143,7 +148,7 @@ namespace RainlinkImportMaker
                     {
                         if (!setRemote.ContainsKey(mwset.Key))
                             keysToRemove.Add(mwset.Key);
-                        else if (setRemote[mwset.Key].MinTxPower == 0 || (mwset.Value.MinRxPower == 0))
+                        else if (setRemote[mwset.Key].MinTxPower == 0)
                             keysToRemove.Add(mwset.Key);
                     }
                     foreach (var key in keysToRemove)
@@ -154,8 +159,8 @@ namespace RainlinkImportMaker
                     // local Rx power - remote Tx power
                     foreach (var mwset in setLocal)
                     {
-                        mwset.Value.MinRxPower = mwset.Value.MinRxPower - setRemote[mwset.Key].MinTxPower;
-                        mwset.Value.MaxRxPower = mwset.Value.MaxRxPower - setRemote[mwset.Key].MaxTxPower;
+                        mwset.Value.MinRxPower -= setRemote[mwset.Key].MinTxPower;
+                        mwset.Value.MaxRxPower = mwset.Value.MinRxPower;
                     }
                 }
 

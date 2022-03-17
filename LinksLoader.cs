@@ -1,7 +1,7 @@
-﻿using System;
+﻿using SQLite;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using SQLite;
 
 namespace RainlinkImportMaker
 {
@@ -20,7 +20,7 @@ namespace RainlinkImportMaker
         public static List<MwUnit> LoadSelectedLinks(Dictionary<int, byte> MwsToLoad)
         {
             List<MwUnit> LoadedUnits = new List<MwUnit>();
-            
+
             int[] keys = MwsToLoad.Keys.ToArray();
             TableQuery<MwLink> query = _dbLinks.Table<MwLink>().Where(v => keys.Contains(v.Id));
 
