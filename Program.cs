@@ -110,13 +110,16 @@ namespace RainlinkImportMaker
 
             /***** LOOP: DATA QUERY -> OUTPUT WRITE *****/
 
+            string noDataLog = string.Empty;
+            int noDataCount = 0;
+
             Dictionary<string, Dictionary<DateTime, MwDataset>> queriedMws = new Dictionary<string, Dictionary<DateTime, MwDataset>>();
             StreamWriter writer = new StreamWriter(args[4]);
             writer.WriteLine("Frequency,DateTime,Pmin,Pmax,PathLength,XStart,YStart,XEnd,YEnd,ID,Polarization,WAA");
 
             for (int i = 0; i < LoadedUnits.Count; i++)
             {
-                Console.Write("\rProcessing MW unit and writing to output: {0,4} /{1,4}", i + 1, LoadedUnits.Count);
+                Console.Write("\rQuerying MW unit data and writing to output: {0,4} /{1,4}", i + 1, LoadedUnits.Count);
                 /* QUERY INFLUXDB TIMESERIES DATA */
 
                 Dictionary<DateTime, MwDataset> setLocal;
@@ -130,6 +133,13 @@ namespace RainlinkImportMaker
                         setLocal = InfluxManager.QueryUnitMean(LoadedUnits[i].Ip, start, end, interval);
                     else
                         setLocal = InfluxManager.QueryUnitMinMax(LoadedUnits[i].Ip, start, end, interval);
+                }
+
+                if (setLocal.Count == 0)
+                {
+                    noDataLog += string.Format("{0,-15}   {1,-6}   {2}\n", LoadedUnits[i].Ip, LoadedUnits[i].Link.Id, LoadedUnits[i].Link.Name);
+                    noDataCount++;
+                    continue;
                 }
 
                 /* MODIFY SIGNAL POWER DATA (local Rx power - remote Tx power) */
@@ -200,6 +210,14 @@ namespace RainlinkImportMaker
 
             writer.Flush();
             writer.Close();
+
+            if (noDataCount > 0)
+            {
+                Console.WriteLine($"\n\nNo data available on the selected time window for {noDataCount} units (of total {LoadedUnits.Count} units):");
+                Console.WriteLine("\n------ IP ------|-- ID --|----------- Name -----------");
+                Console.WriteLine(noDataLog);
+            }
+
             Console.WriteLine("\nDone!");
         }
     }
