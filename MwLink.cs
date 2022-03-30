@@ -49,5 +49,8 @@ namespace RainlinkImportMaker
 
         [Column("distance")]
         public double Distance { get; set; }
+
+        [Column("WAA")]
+        public double WAA { get; set; }
     }
 }

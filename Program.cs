@@ -112,7 +112,7 @@ namespace RainlinkImportMaker
 
             Dictionary<string, Dictionary<DateTime, MwDataset>> queriedMws = new Dictionary<string, Dictionary<DateTime, MwDataset>>();
             StreamWriter writer = new StreamWriter(args[4]);
-            writer.WriteLine("Frequency,DateTime,Pmin,Pmax,PathLength,XStart,YStart,XEnd,YEnd,ID,Polarization");
+            writer.WriteLine("Frequency,DateTime,Pmin,Pmax,PathLength,XStart,YStart,XEnd,YEnd,ID,Polarization,WAA");
 
             for (int i = 0; i < LoadedUnits.Count; i++)
             {
@@ -194,7 +194,7 @@ namespace RainlinkImportMaker
                     writer.WriteLine($"{freq.ToString("0.000", CultureInfo.InvariantCulture)}," +
                         $"{time},{mwset.Value.MinRxPower.ToString("0.000", CultureInfo.InvariantCulture)},{mwset.Value.MaxRxPower.ToString("0.000", CultureInfo.InvariantCulture)}," +
                         $"{LoadedUnits[i].Link.Distance.ToString("0.000", CultureInfo.InvariantCulture)},{xstart.ToString("0.000000", CultureInfo.InvariantCulture)},{ystart.ToString("0.000000", CultureInfo.InvariantCulture)}," +
-                        $"{xend.ToString("0.000000", CultureInfo.InvariantCulture)},{yend.ToString("0.000000", CultureInfo.InvariantCulture)},{id},{polar}");
+                        $"{xend.ToString("0.000000", CultureInfo.InvariantCulture)},{yend.ToString("0.000000", CultureInfo.InvariantCulture)},{id},{polar},{LoadedUnits[i].Link.WAA.ToString("0.00", CultureInfo.InvariantCulture)}");
                 }
             }
 
